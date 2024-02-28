@@ -3,6 +3,8 @@ const {check} = require("express-validator")
 const { getUsers, postUsers, putUsers, deleteUsers } = require("../controllers/users.controllers")
 const { validateFiels } = require("../middlewares/validate-files")
 const { validateRoles, validateEmail, userExistsById } = require("../helpers/db-validators")
+const { validateJWT } = require("../middlewares/validate-jwt")
+const { administratorRole, hasAValidRole } = require("../middlewares/validate-roles")
 const router = Router()
 
 router.post("/", [
@@ -24,6 +26,11 @@ router.put("/:id",[
     validateFiels
 ], putUsers)
 router.delete("/:id", [
+    validateJWT,
+    // Solo para permitir el role de teacher
+    // administratorRole,
+    // Permitir algunos de los roles "TEACHER_ROLE", "STUDENT_ROLE"
+    hasAValidRole("TEACHER_ROLE", "STUDENT_ROLE"),
     check("id", "No es un id valido").isMongoId(),
     check('id').custom(userExistsById),
     validateFiels

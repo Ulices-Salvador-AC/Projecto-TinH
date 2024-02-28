@@ -52,14 +52,12 @@ const putUsers = async(req = request, res = response) => {
 
 const deleteUsers = async(req = request, res = response) => {
     const {id} = req.params
-    // Borrar definitivamente
-    // const user = await User.findByIdAndDelete(id)
-
-    // Visualmente se borra, pero no se borra de base de datos solo su state se encuentra inactivo(State: false)
     const user = await User.findByIdAndUpdate(id, {state: false})
-
+    const authenticatedUser = req.user
+    
     res.json({
-        user
+        user,
+        authenticatedUser
     })
 }
 
